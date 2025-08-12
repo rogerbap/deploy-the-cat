@@ -57,6 +57,9 @@ function App() {
   const [timeUntilAttack, setTimeUntilAttack] = useState<number>(0);
   const [sabotageTimeoutId, setSabotageTimeoutId] = useState<number | null>(null);
 
+  // Check if we're in development mode
+  const isDevelopment = import.meta.env?.DEV || window.location.hostname === 'localhost';
+
   const addLog = useCallback((message: string) => {
     const timestamp = new Date().toLocaleTimeString();
     setLogs(prev => [...prev, `[${timestamp}] ${message}`]);
@@ -220,9 +223,14 @@ function App() {
 
   // Socket connection with debug support
   useEffect(() => {
-    addDebugLog('Attempting socket connection to http://localhost:5000');
+    // Use production backend URL when deployed, localhost when developing
+    const socketUrl = isDevelopment 
+      ? 'http://localhost:5000' 
+      : 'https://railway.com/project/aa8ebad9-9d50-46a1-9a0e-db5352b55139';
     
-    const socketConnection = io('http://localhost:5000');
+    addDebugLog(`Attempting socket connection to ${socketUrl}`);
+    
+    const socketConnection = io(socketUrl);
     setSocket(socketConnection);
 
     socketConnection.on('connect', () => {
@@ -603,7 +611,7 @@ function App() {
               </button>
             )}
             {/* Debug controls - hidden by default for clean portfolio demo */}
-            {process.env.NODE_ENV === 'development' && (
+            {isDevelopment && (
               <>
                 <button 
                   onClick={() => setDebugMode(!debugMode)} 
@@ -632,7 +640,7 @@ function App() {
           </div>
 
           {/* Debug panel - only show in development */}
-          {debugMode && process.env.NODE_ENV === 'development' && (
+          {debugMode && isDevelopment && (
             <div className="debug-panel">
               <h3>🐛 Debug Information</h3>
               <div className="debug-info">
