@@ -226,7 +226,7 @@ function App() {
     // Use production backend URL when deployed, localhost when developing
     const socketUrl = isDevelopment 
       ? 'http://localhost:5000' 
-      : 'https://railway.com/project/aa8ebad9-9d50-46a1-9a0e-db5352b55139';
+      : 'https://deploy-the-cat.onrender.com';
     
     addDebugLog(`Attempting socket connection to ${socketUrl}`);
     
